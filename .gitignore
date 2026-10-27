@@ -8,6 +8,12 @@
 .Xil/
 xsim.dir/
 
+# Vivado generated caches and simulation output
+*.cache/
+**/*.cache/
+**/sim/
+**/wt/
+
 # Synthesis outputs
 *.bit
 *.bin
