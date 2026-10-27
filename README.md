@@ -1,4 +1,4 @@
-\# 8-Bit UART Transceiver Core (Verilog HDL)
+# 8-Bit UART Transceiver Core (Verilog HDL)
 
 
 
@@ -6,51 +6,51 @@ A synthesizable 8-bit UART core in Verilog HDL featuring configurable baud rates
 
 
 
-\## Architecture
+## Architecture
 
 
 
-\- baud\_rate\_gen.v: Generates sampling ticks from system clock (standard 1x baud tick for TX, 16x oversampled tick for RX).
+- baud_rate_gen.v: Generates sampling ticks from system clock (standard 1x baud tick for TX, 16x oversampled tick for RX).
 
-\- uart\_tx.v: Transmit engine. Serializes 8-bit parallel data LSB-first with 1 start bit and 1 stop bit.
+- uart_tx.v: Transmit engine. Serializes 8-bit parallel data LSB-first with 1 start bit and 1 stop bit.
 
-\- uart\_rx.v: Receive engine. Uses 16x oversampling with midpoint majority voting to capture serial data.
+- uart_rx.v: Receive engine. Uses 16x oversampling with midpoint majority voting to capture serial data.
 
-\- uart\_top.v: Top-level integration module connecting baud generator, TX, and RX.
-
-
-
-\## Protocol Specification
+- uart_top.v: Top-level integration module connecting baud generator, TX, and RX.
 
 
 
-\- Data width: 8 bits
-
-\- Start bit: 1 bit (Low)
-
-\- Stop bit: 1 bit (High)
-
-\- Parity: None (8-N-1)
-
-\- Bit order: LSB first
+## Protocol Specification
 
 
 
-\## Baud Rates (50 MHz Clock)
+- Data width: 8 bits
+
+- Start bit: 1 bit (Low)
+
+- Stop bit: 1 bit (High)
+
+- Parity: None (8-N-1)
+
+- Bit order: LSB first
 
 
 
-\- 9600 bps: 16x oversample divider = 325
-
-\- 115200 bps: 16x oversample divider = 27
+## Baud Rates (50 MHz Clock)
 
 
 
-\## Simulation \& Testing
+- 9600 bps: 16x oversample divider = 325
+
+- 115200 bps: 16x oversample divider = 27
 
 
 
-\- Use Icarus Verilog or Vivado to run `uart\_top\_tb.v`.
+## Simulation & Testing
 
-\- Performs full loopback verification by tying TX out to RX in.
+
+
+- Use Icarus Verilog or Vivado to run `uart_top_tb.v`.
+
+- Performs full loopback verification by tying TX out to RX in.
 
