@@ -1,0 +1,20 @@
+# Vivado and EDA logs
+*.log
+*.jou
+*.pb
+*.wdb
+*.vcd
+*.str
+.Xil/
+xsim.dir/
+
+# Synthesis outputs
+*.bit
+*.bin
+*.dcp
+*.rpt
+runs/
+
+# System junk
+Thumbs.db
+.DS_Store
