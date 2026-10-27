@@ -1,0 +1,7 @@
+Time resolution is 1 ps
+--- PHASE 1: A Transmits to B ---
+Device B received: 5a (Expected: 5a) | Error: 0
+--- PHASE 2: B Sends ACK to A ---
+Device A received ACK: aa (Expected: aa) | Error: 0
+--- TEST COMPLETE ---
+$finish called at time : 3000240 ns : File "C:/Users/abhin/Documents/transmitter_receiver_UART_rev_2/transmitter_receiver_UART_rev_2.srcs/sim_1/new/UART_transceiver_testbench.v" Line 92
