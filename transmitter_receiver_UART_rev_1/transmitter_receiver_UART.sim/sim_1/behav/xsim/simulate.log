@@ -1,5 +1,0 @@
-Time resolution is 1 ps
---- TEST RESULTS ---
-UUT 1 (Synchronized): ACK = 1, ERROR = 0
-UUT 2 (Mismatched):   ACK = 0, ERROR = 1
-$finish called at time : 1500220 ns : File "C:/Users/abhin/Documents/transmitter_receiver_UART/transmitter_receiver_UART.srcs/sim_1/new/tb_uart_self_test.v" Line 79

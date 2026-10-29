@@ -1,7 +1,0 @@
-Running: xsim.dir/tb_dual_transceiver_behav/xsimk.exe -simmode gui -wdb tb_dual_transceiver_behav.wdb -simrunnum 0 -socket 58899
-Design successfully loaded
-Design Loading Memory Usage: 28696 KB (Peak: 28696 KB)
-Design Loading CPU Usage: 874 ms
-Simulation completed
-Simulation Memory Usage: 37552 KB (Peak: 37552 KB)
-Simulation CPU Usage: 1140 ms
