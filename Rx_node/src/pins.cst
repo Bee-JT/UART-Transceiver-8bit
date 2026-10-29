@@ -1,0 +1,13 @@
+// Visual Debugging: Map lower 6 bits to onboard LEDs (Bank 3 - MUST BE 1.8V)
+IO_LOC "rx_byte[5]" 16;
+IO_PORT "rx_byte[5]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_LOC "rx_byte[4]" 15;
+IO_PORT "rx_byte[4]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_LOC "rx_byte[3]" 14;
+IO_PORT "rx_byte[3]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_LOC "rx_byte[2]" 13;
+IO_PORT "rx_byte[2]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_LOC "rx_byte[1]" 11;
+IO_PORT "rx_byte[1]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_LOC "rx_byte[0]" 10;
+IO_PORT "rx_byte[0]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
