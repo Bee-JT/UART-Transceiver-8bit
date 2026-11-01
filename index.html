@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UART Transceiver Architecture | KLE Technological University ECE - Team 05</title>
+  
+  <!-- Immediate Pre-Render Theme Initialisation to Prevent FOUC -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('team05_theme');
+      if (savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            // Refined Editorial Palette
+            draft: {
+              50: '#FBFBFA',
+              100: '#F6F6F4',
+              200: '#EBEBE7',
+              300: '#DDDDD7',
+              400: '#B8B8B0',
+              500: '#8E8E84',
+              600: '#64645C',
+              700: '#464640',
+              800: '#2A2A26',
+              900: '#151513',
+            },
+            marine: {
+              50: '#F0F4F8',
+              100: '#D9E2EC',
+              200: '#BCCCDC',
+              700: '#243B53',
+              800: '#1B365D', // Oxford Technical Marine
+              900: '#102A43',
+            },
+            terracotta: {
+              50: '#FFF7ED',
+              100: '#FFEDD5',
+              600: '#C2410C',
+              700: '#9A3412',
+              800: '#7C2D12',
+            },
+            graphite: {
+              850: '#191B1E',
+              900: '#141517',
+              950: '#0F1011',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Typography: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Editorial Layout Styling */
+    ::selection {
+      background-color: #1B365D;
+      color: #FFFFFF;
+    }
+    .dark ::selection {
+      background-color: #4B6B94;
+      color: #FFFFFF;
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #B8B8B0;
+      border-radius: 2px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #2D3136;
+    }
+    .hairline-b {
+      border-bottom: 1px solid #E4E4E1;
+    }
+    .dark .hairline-b {
+      border-bottom: 1px solid #23262B;
+    }
+    .hairline-r {
+      border-right: 1px solid #E4E4E1;
+    }
+    .dark .hairline-r {
+      border-right: 1px solid #23262B;
+    }
+  </style>
+</head>
+<body class="bg-[#F8F8F6] dark:bg-[#121314] text-[#222426] dark:text-[#E2E4E7] font-sans antialiased min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Editorial Top Institutional Masthead -->
+  <header class="bg-white dark:bg-[#16181B] border-b border-[#E2E2DF] dark:border-[#23262B] sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Academic Department Header -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('overview')">
+          <div class="w-1.5 h-8 bg-marine-800 dark:bg-[#4B6B94]"></div>
+          <div>
+            <div class="text-[10px] uppercase font-bold tracking-widest text-[#5C5F66] dark:text-[#9BA1A8]">
+              KLE Technological University &bull; School of ECE
+            </div>
+            <div class="text-xs sm:text-sm font-semibold tracking-tight text-[#141517] dark:text-[#F0F2F5] flex items-center gap-2">
+              <span>Mini-Project Team 05</span>
+              <span class="text-[11px] font-normal text-[#6E727A] dark:text-[#888E96] font-mono">[Division B &bull; 2024–25]</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Navigation -->
+        <nav class="hidden md:flex items-center space-x-1 text-xs">
+          <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-button px-3 py-1.5 rounded font-medium text-marine-800 dark:text-[#8BB2DF] bg-draft-100 dark:bg-[#202328] transition-colors">
+            Overview &amp; Migration
+          </button>
+          <button onclick="switchTab('team')" id="tab-btn-team" class="tab-button px-3 py-1.5 rounded font-medium text-[#5C5F66] dark:text-[#9BA1A8] hover:text-[#141517] dark:hover:text-white transition-colors">
+            Team &amp; Responsibilities
+          </button>
+          <button onclick="switchTab('notebook')" id="tab-btn-notebook" class="tab-button px-3 py-1.5 rounded font-medium text-[#5C5F66] dark:text-[#9BA1A8] hover:text-[#141517] dark:hover:text-white transition-colors">
+            Laboratory Notebook
+          </button>
+          <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-button px-3 py-1.5 rounded font-medium text-[#5C5F66] dark:text-[#9BA1A8] hover:text-[#141517] dark:hover:text-white transition-colors">
+            Engineering Utilities
+          </button>
+        </nav>
+
+        <!-- Right Toolbelt -->
+        <div class="flex items-center space-x-2">
+          <a href="https://github.com/Bee-JT/UART-Transceiver-8bit.git" target="_blank" rel="noopener noreferrer" 
+             class="inline-flex items-center space-x-1.5 text-xs font-mono font-medium px-3 py-1.5 rounded bg-white dark:bg-[#1E2126] text-[#222426] dark:text-[#D5D9E0] border border-[#D5D5D0] dark:border-[#2D3138] hover:bg-draft-100 dark:hover:bg-[#262A31] transition-colors"
+             title="GitHub Repository">
+            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-[#5C5F66] dark:text-[#9BA1A8]"></i>
+            <span class="hidden sm:inline">Repository</span>
+            <i data-lucide="external-link" class="w-3 h-3 text-[#8E9298]"></i>
+          </a>
+
+          <!-- Subtle Tactile Theme Toggle -->
+          <button onclick="toggleTheme()" 
+                  class="p-1.5 rounded border border-[#D5D5D0] dark:border-[#2D3138] bg-white dark:bg-[#1E2126] text-[#4A4D53] dark:text-[#B0B6BF] hover:bg-draft-100 dark:hover:bg-[#262A31] transition-colors"
+                  aria-label="Toggle theme">
+            <i data-lucide="sun" id="theme-toggle-icon" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mobile Navigation Sub-bar -->
+      <div class="md:hidden flex overflow-x-auto py-2 border-t border-[#E8E8E4] dark:border-[#23262B] space-x-2 text-xs">
+        <button onclick="switchTab('overview')" class="px-2.5 py-1 rounded whitespace-nowrap font-medium text-marine-800 dark:text-[#8BB2DF] bg-draft-100 dark:bg-[#202328]">Overview</button>
+        <button onclick="switchTab('team')" class="px-2.5 py-1 rounded whitespace-nowrap text-[#5C5F66] dark:text-[#9BA1A8]">Team Roster</button>
+        <button onclick="switchTab('notebook')" class="px-2.5 py-1 rounded whitespace-nowrap text-[#5C5F66] dark:text-[#9BA1A8]">Lab Notebook</button>
+        <button onclick="switchTab('tools')" class="px-2.5 py-1 rounded whitespace-nowrap text-[#5C5F66] dark:text-[#9BA1A8]">Utilities</button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Editorial Hero Section -->
+  <section class="bg-white dark:bg-[#16181B] border-b border-[#E2E2DF] dark:border-[#23262B] py-8 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div class="max-w-3xl space-y-3">
+          <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+            <span class="px-2 py-0.5 rounded bg-draft-100 dark:bg-[#202328] text-marine-800 dark:text-[#94B6DF] border border-[#DCDCD7] dark:border-[#2B2F36] font-semibold">
+              RTL Microarchitecture
+            </span>
+            <span class="text-[#8E9298]">&bull;</span>
+            <span class="text-[#5C5F66] dark:text-[#A0A6AF]">Academic Guide:</span>
+            <span class="font-semibold text-[#141517] dark:text-[#E8EAEF]">Prof. Preeti S Pillai</span>
+          </div>
+
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#141517] dark:text-[#F2F4F7] leading-tight">
+            8-Bit Asynchronous Serial Transceiver (UART)
+          </h1>
+          <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#9FA5AF] leading-relaxed">
+            Hardware microarchitecture implementation and physical bring-up in synthesised Verilog-2001. Designed for reliable asynchronous packet serialization, framing error immunity, and hardware prescaler clock division on the Sipeed Tang Nano 9K FPGA.
+          </p>
+        </div>
+
+        <!-- Telemetry Data Matrix -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono shrink-0">
+          <div class="p-2.5 bg-draft-50 dark:bg-[#1A1C20] rounded border border-[#E0E0DB] dark:border-[#26292F]">
+            <span class="text-[10px] text-[#717680] dark:text-[#828892] block font-sans uppercase tracking-wider">Active Board</span>
+            <span class="font-bold text-[#141517] dark:text-[#ECEEF2]">Tang Nano 9K</span>
+          </div>
+          <div class="p-2.5 bg-draft-50 dark:bg-[#1A1C20] rounded border border-[#E0E0DB] dark:border-[#26292F]">
+            <span class="text-[10px] text-[#717680] dark:text-[#828892] block font-sans uppercase tracking-wider">Default Baud</span>
+            <span class="font-bold text-marine-800 dark:text-[#8BB2DF]">9600 bps</span>
+          </div>
+          <div class="p-2.5 bg-draft-50 dark:bg-[#1A1C20] rounded border border-[#E0E0DB] dark:border-[#26292F]">
+            <span class="text-[10px] text-[#717680] dark:text-[#828892] block font-sans uppercase tracking-wider">Bit Period</span>
+            <span class="font-bold text-[#141517] dark:text-[#ECEEF2]">~104.17 &mu;s</span>
+          </div>
+          <div class="p-2.5 bg-draft-50 dark:bg-[#1A1C20] rounded border border-[#E0E0DB] dark:border-[#26292F]">
+            <span class="text-[10px] text-[#717680] dark:text-[#828892] block font-sans uppercase tracking-wider">Current Sprint</span>
+            <span class="font-bold text-terracotta-700 dark:text-[#E07A5F]">TX Bring-Up</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Main Body Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+    <!-- =================================================== -->
+    <!-- TAB 1: SYSTEM OVERVIEW & ARCHITECTURAL PIVOT        -->
+    <!-- =================================================== -->
+    <div id="tab-overview" class="space-y-6">
+
+      <!-- Engineering Adaptation & Roadblock Record -->
+      <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-4">
+        <div class="flex items-center space-x-2 text-terracotta-700 dark:text-[#E07A5F] text-xs font-bold uppercase tracking-wider font-mono">
+          <i data-lucide="shield-alert" class="w-4 h-4"></i>
+          <span>Engineering Adaptation Record &bull; Platform Migration</span>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-lg font-bold text-[#141517] dark:text-[#F0F2F5]">
+            Hardware Migration from AMD Xilinx Artix-7 to Gowin GW1NR-9C (Tang Nano 9K)
+          </h2>
+          <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+            The transceiver logic was originally specified, coded, and simulated for the departmental <strong>AMD Xilinx Artix-7 (XC7A100TCSG324-1)</strong> evaluation board referencing a <strong>50.0 MHz</strong> system clock. Following an institutional laboratory equipment policy constraint where Artix-7 hardware access was restricted to senior capstone tracks, the team executed an immediate architecture migration to maintain physical bring-up progress.
+          </p>
+          <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+            The platform was migrated to the team-procured <strong>Sipeed Tang Nano 9K</strong> board, driven by the <strong>Gowin LittleBee GW1NR-9C (GW1NR-LV9QN88PC6/I5)</strong> FPGA. This change required refactoring the clock prescaler modulus from 50 MHz to the onboard <strong>27.0 MHz oscillator</strong>, transitioning the compilation toolchain to <strong>Gowin EDA V1.9.9</strong>, and authoring native physical pin constraints (<code class="font-mono text-xs bg-draft-100 dark:bg-[#202328] px-1.5 py-0.5 rounded">tang_nano_9k.cst</code>).
+          </p>
+        </div>
+
+        <!-- Comparative Engineering Metrics Table -->
+        <div class="pt-2">
+          <div class="text-xs font-mono uppercase text-[#717680] dark:text-[#888E96] mb-2 font-semibold">
+            Microarchitecture Prescaler Math Comparison
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono divide-y divide-[#E4E4E1] dark:divide-[#26292F]">
+              <thead class="bg-draft-50 dark:bg-[#1D2024] text-[#5C5F66] dark:text-[#9AA0A9]">
+                <tr>
+                  <th class="p-2.5">Parameter</th>
+                  <th class="p-2.5">Baseline Design (Artix-7)</th>
+                  <th class="p-2.5 text-marine-800 dark:text-[#8BB2DF] font-bold">Deployed Design (Tang Nano 9K)</th>
+                  <th class="p-2.5">Asynchronous Drift Impact</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#EAEAE6] dark:divide-[#23262B] text-[#333538] dark:text-[#C8CCD2]">
+                <tr>
+                  <td class="p-2.5 font-sans font-semibold text-[#141517] dark:text-[#E8EAEF]">Master Oscillator Clock</td>
+                  <td class="p-2.5">50.000 MHz</td>
+                  <td class="p-2.5 font-bold text-marine-800 dark:text-[#8BB2DF]">27.000 MHz</td>
+                  <td class="p-2.5 font-sans text-[#5C5F66] dark:text-[#8E949E]">Onboard crystal oscillator reference.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-sans font-semibold text-[#141517] dark:text-[#E8EAEF]">Default Baud Rate</td>
+                  <td class="p-2.5">9600 bps</td>
+                  <td class="p-2.5 font-bold">9600 bps</td>
+                  <td class="p-2.5 font-sans text-[#5C5F66] dark:text-[#8E949E]">Standard laboratory baseline format.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-sans font-semibold text-[#141517] dark:text-[#E8EAEF]">Prescaler Divisor (Modulus)</td>
+                  <td class="p-2.5">Div = round(50M / 9600) = <strong class="text-[#141517] dark:text-white">5208</strong></td>
+                  <td class="p-2.5 font-bold text-marine-800 dark:text-[#8BB2DF]">Div = round(27M / 9600) = 2813</td>
+                  <td class="p-2.5 font-sans text-[#5C5F66] dark:text-[#8E949E]">Counter bit-width requirement: 12 bits.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-sans font-semibold text-[#141517] dark:text-[#E8EAEF]">Synthesized Baud Frequency</td>
+                  <td class="p-2.5">9,600.61 bps</td>
+                  <td class="p-2.5 font-bold">9,598.29 bps</td>
+                  <td class="p-2.5 font-sans text-[#5C5F66] dark:text-[#8E949E]">Tang Nano drift: -0.018% (Well under &plusmn;2.5% tolerance).</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-sans font-semibold text-[#141517] dark:text-[#E8EAEF]">Nominal Bit Duration</td>
+                  <td class="p-2.5">104.16 &mu;s</td>
+                  <td class="p-2.5 font-bold">104.18 &mu;s</td>
+                  <td class="p-2.5 font-sans text-[#5C5F66] dark:text-[#8E949E]">Sub-microsecond variance from ideal 104.167 &mu;s.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scope of Active Sprint: Transmitter Physical Bring-Up -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="md:col-span-2 bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-4">
+          <div class="flex items-center space-x-2 text-marine-800 dark:text-[#8BB2DF] text-xs font-bold uppercase tracking-wider font-mono">
+            <i data-lucide="crosshair" class="w-4 h-4"></i>
+            <span>Current Sprint Objective</span>
+          </div>
+          <h3 class="text-base font-bold text-[#141517] dark:text-[#F0F2F5]">
+            Isolated Transmitter (TX) Physical Layer Silicon Validation
+          </h3>
+          <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+            In accordance with sound hardware verification practice, rather than attempting simultaneous loopback testing on uncharacterised silicon, the active sprint concentrates solely on the physical bring-up of the <strong>Transmitter (TX) module</strong>.
+          </p>
+          <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+            The transmitter state machine continuously or strobedly emits structured ASCII character frames (e.g. repeated <code class="font-mono text-xs bg-draft-100 dark:bg-[#202328] px-1 py-0.5 rounded">0x55</code> or text strings) through Pin 17 directly into the Tang Nano's onboard USB-to-UART bridge. Telemetry is decoded on a host terminal emulator (PuTTY / Tera Term) at 9600 Baud (8-N-1) to verify edge transitions, stop-bit holding times, and framing stability before advancing to receiver (RX) oversampling integration.
+          </p>
+
+          <div class="grid grid-cols-3 gap-3 pt-2 text-xs font-mono">
+            <div class="p-3 bg-draft-50 dark:bg-[#1D2024] rounded border border-[#E0E0DB] dark:border-[#26292F]">
+              <span class="text-[10px] text-[#717680] dark:text-[#888E96] block font-sans uppercase">Phase 1: RTL Logic</span>
+              <span class="font-bold text-[#141517] dark:text-[#E8EAEF]">Verified (Gowin EDA)</span>
+            </div>
+            <div class="p-3 bg-draft-50 dark:bg-[#1D2024] rounded border border-[#E0E0DB] dark:border-[#26292F]">
+              <span class="text-[10px] text-[#717680] dark:text-[#888E96] block font-sans uppercase">Phase 2: TX Hardware</span>
+              <span class="font-bold text-terracotta-700 dark:text-[#E07A5F]">Active Lab Sprint</span>
+            </div>
+            <div class="p-3 bg-draft-50 dark:bg-[#1D2024] rounded border border-[#E0E0DB] dark:border-[#26292F]">
+              <span class="text-[10px] text-[#717680] dark:text-[#888E96] block font-sans uppercase">Phase 3: RX Loopback</span>
+              <span class="font-bold text-[#8E9298]">Pending TX Sign-off</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Assessment Card -->
+        <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-mono uppercase text-[#717680] dark:text-[#888E96] font-semibold mb-1">
+              Course Details
+            </div>
+            <h4 class="text-sm font-bold text-[#141517] dark:text-[#F0F2F5]">
+              KLE Technological University
+            </h4>
+            <div class="text-xs text-[#5C5F66] dark:text-[#9FA5AF] mt-0.5">
+              School of Electronics &amp; Communication Engineering
+            </div>
+
+            <div class="mt-4 space-y-2.5 text-xs">
+              <div class="flex justify-between py-1 border-b border-[#EAEAE6] dark:border-[#23262B]">
+                <span class="text-[#717680] dark:text-[#888E96]">Course:</span>
+                <span class="font-medium text-[#141517] dark:text-[#E8EAEF]">Mini-Project 2024–25</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-[#EAEAE6] dark:border-[#23262B]">
+                <span class="text-[#717680] dark:text-[#888E96]">Division &amp; Team:</span>
+                <span class="font-mono font-medium text-[#141517] dark:text-[#E8EAEF]">Division B &bull; Team 05</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-[#EAEAE6] dark:border-[#23262B]">
+                <span class="text-[#717680] dark:text-[#888E96]">Faculty Guide:</span>
+                <span class="font-medium text-marine-800 dark:text-[#8BB2DF]">Prof. Preeti S Pillai</span>
+              </div>
+              <div class="flex justify-between py-1">
+                <span class="text-[#717680] dark:text-[#888E96]">Repository:</span>
+                <span class="font-mono text-[11px] text-[#141517] dark:text-[#E8EAEF]">UART-Transceiver-8bit</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-[#EAEAE6] dark:border-[#23262B]">
+            <a href="https://github.com/Bee-JT/UART-Transceiver-8bit.git" target="_blank" rel="noopener noreferrer"
+               class="w-full inline-flex items-center justify-center space-x-2 text-xs font-medium py-2 rounded bg-draft-100 dark:bg-[#202328] hover:bg-draft-200 dark:hover:bg-[#262A31] text-[#141517] dark:text-[#F0F2F5] transition-colors border border-[#D5D5D0] dark:border-[#2D3138]">
+              <i data-lucide="github" class="w-3.5 h-3.5"></i>
+              <span>Access Git Source Repository</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =================================================== -->
+    <!-- TAB 2: TEAM ROSTER & HONEST WORK ALLOCATION         -->
+    <!-- =================================================== -->
+    <div id="tab-team" class="hidden space-y-6">
+      
+      <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-6">
+        <div>
+          <div class="text-xs font-mono uppercase text-[#717680] dark:text-[#888E96] font-semibold tracking-wider">
+            Departmental Project Roster
+          </div>
+          <h2 class="text-xl font-bold text-[#141517] dark:text-[#F0F2F5] mt-1">
+            Team 05 — Member Contributions &amp; Subsystem Allocation
+          </h2>
+          <p class="text-xs sm:text-sm text-[#5C5F66] dark:text-[#A0A6AF] mt-1">
+            Work division mapped to specific laboratory deliverables under the mentorship of <strong>Prof. Preeti S Pillai</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Member 1: Abhinandan U (Project & RTL Lead) -->
+          <div class="p-5 rounded border border-[#C5C5BF] dark:border-[#383C44] bg-draft-50/50 dark:bg-[#15171A] space-y-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="inline-block text-[10px] font-mono uppercase tracking-wider font-semibold text-marine-800 dark:text-[#8BB2DF] bg-marine-50 dark:bg-[#1D2530] px-2 py-0.5 rounded border border-marine-100 dark:border-[#2A3748]">
+                  Project &amp; RTL Lead
+                </span>
+                <h3 class="text-base font-bold text-[#141517] dark:text-[#F0F2F5] mt-1.5">Abhinandan U</h3>
+                <div class="text-xs font-mono text-[#5C5F66] dark:text-[#888E96]">USN: 01FE24BEC038 &bull; Roll: 225</div>
+              </div>
+              <span class="text-xs font-mono text-[#8E9298] dark:text-[#5A6069]">01</span>
+            </div>
+
+            <div class="pt-2 border-t border-[#E4E4E0] dark:border-[#26292F] text-xs text-[#4E5259] dark:text-[#A0A6AF] space-y-1.5">
+              <div class="font-semibold text-[#141517] dark:text-[#E8EAEF]">Allocated Engineering Deliverables:</div>
+              <ul class="list-disc list-inside space-y-1 pl-1">
+                <li>Microarchitecture specification and behavioral Verilog coding (<code class="font-mono text-[11px] text-marine-800 dark:text-[#8BB2DF]">uart_tx.v</code>, <code class="font-mono text-[11px] text-marine-800 dark:text-[#8BB2DF]">baud_gen.v</code>).</li>
+                <li>Prescaler math recalibration for 27.0 MHz oscillator (modulus 2813 for 9600 baud).</li>
+                <li>Gowin EDA compilation flow, bitstream synthesis, and CST physical constraints design.</li>
+                <li>Primary hardware bring-up and physical UART transmission signal characterisation.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Member 2: Sukruti K (Verification Lead) -->
+          <div class="p-5 rounded border border-[#D5D5CF] dark:border-[#2F3238] bg-draft-50/50 dark:bg-[#15171A] space-y-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="inline-block text-[10px] font-mono uppercase tracking-wider font-semibold text-[#2D5A27] dark:text-[#87C380] bg-[#F0F7EE] dark:bg-[#1A2619] px-2 py-0.5 rounded border border-[#D5E8D2] dark:border-[#273825]">
+                  Verification Lead
+                </span>
+                <h3 class="text-base font-bold text-[#141517] dark:text-[#F0F2F5] mt-1.5">Sukruti K</h3>
+                <div class="text-xs font-mono text-[#5C5F66] dark:text-[#888E96]">USN: 01FE24BEC363 &bull; Roll: 215</div>
+              </div>
+              <span class="text-xs font-mono text-[#8E9298] dark:text-[#5A6069]">02</span>
+            </div>
+
+            <div class="pt-2 border-t border-[#E4E4E0] dark:border-[#26292F] text-xs text-[#4E5259] dark:text-[#A0A6AF] space-y-1.5">
+              <div class="font-semibold text-[#141517] dark:text-[#E8EAEF]">Allocated Engineering Deliverables:</div>
+              <ul class="list-disc list-inside space-y-1 pl-1">
+                <li>Authoring behavioral testbench harnesses natively within the Gowin EDA simulation environment.</li>
+                <li>Waveform timing verification and bit-edge alignment analysis to confirm 104.17 &mu;s bit slot compliance.</li>
+                <li>Evaluating mid-bit strobe alignment and clock drift safety margins across simulated baud boundaries.</li>
+                <li>Formulating test vectors for framing error immunity and stop bit detection.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Member 3: Vinod Desai (Systems Documentation) -->
+          <div class="p-5 rounded border border-[#E0E0DB] dark:border-[#292C32] bg-draft-50/30 dark:bg-[#15171A] space-y-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="inline-block text-[10px] font-mono uppercase tracking-wider font-semibold text-[#5C5F66] dark:text-[#9AA0A9] bg-draft-100 dark:bg-[#1E2125] px-2 py-0.5 rounded border border-[#DCDCD7] dark:border-[#2B2E34]">
+                  Systems Documentation
+                </span>
+                <h3 class="text-base font-bold text-[#141517] dark:text-[#F0F2F5] mt-1.5">Vinod Desai</h3>
+                <div class="text-xs font-mono text-[#5C5F66] dark:text-[#888E96]">
+                  USN: <span class="italic text-terracotta-700 dark:text-[#E07A5F]">Pending Verification</span> &bull; Roll: 232
+                </div>
+              </div>
+              <span class="text-xs font-mono text-[#8E9298] dark:text-[#5A6069]">03</span>
+            </div>
+
+            <div class="pt-2 border-t border-[#E4E4E0] dark:border-[#26292F] text-xs text-[#4E5259] dark:text-[#A0A6AF] space-y-1.5">
+              <div class="font-semibold text-[#141517] dark:text-[#E8EAEF]">Allocated Engineering Deliverables:</div>
+              <ul class="list-disc list-inside space-y-1 pl-1">
+                <li>Maintenance and compilation of chronological laboratory notebook records.</li>
+                <li>Compiling asynchronous communication protocol standards and frame specifications.</li>
+                <li>Mapping test verification records against departmental review rubric milestones.</li>
+                <li>Assisting with documentation proofing and technical report synthesis.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Member 4: Kashu Iraddi (Hardware Support & Component Characterisation) -->
+          <div class="p-5 rounded border border-[#E0E0DB] dark:border-[#292C32] bg-draft-50/30 dark:bg-[#15171A] space-y-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="inline-block text-[10px] font-mono uppercase tracking-wider font-semibold text-[#5C5F66] dark:text-[#9AA0A9] bg-draft-100 dark:bg-[#1E2125] px-2 py-0.5 rounded border border-[#DCDCD7] dark:border-[#2B2E34]">
+                  Hardware Support
+                </span>
+                <h3 class="text-base font-bold text-[#141517] dark:text-[#F0F2F5] mt-1.5">Kashu Iraddi</h3>
+                <div class="text-xs font-mono text-[#5C5F66] dark:text-[#888E96]">USN: 01FE24BEC014 &bull; Roll: 263</div>
+              </div>
+              <span class="text-xs font-mono text-[#8E9298] dark:text-[#5A6069]">04</span>
+            </div>
+
+            <div class="pt-2 border-t border-[#E4E4E0] dark:border-[#26292F] text-xs text-[#4E5259] dark:text-[#A0A6AF] space-y-1.5">
+              <div class="font-semibold text-[#141517] dark:text-[#E8EAEF]">Allocated Engineering Deliverables:</div>
+              <ul class="list-disc list-inside space-y-1 pl-1">
+                <li>Extracting package pinout assignments and I/O bank banks from the GW1NR-9C datasheet.</li>
+                <li>Conducting physical bench wiring continuity tests and Tang Nano header verification.</li>
+                <li>Configuring host computer terminal parameters (PuTTY baud rate, COM port mappings).</li>
+                <li>Supporting literature reviews on UART synchronizer metastability mitigation.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =================================================== -->
+    <!-- TAB 3: LABORATORY DEVELOPMENT NOTEBOOK              -->
+    <!-- =================================================== -->
+    <div id="tab-notebook" class="hidden space-y-6">
+
+      <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-6">
+        <div>
+          <div class="text-xs font-mono uppercase text-[#717680] dark:text-[#888E96] font-semibold tracking-wider">
+            Chronological Audit Trail
+          </div>
+          <h2 class="text-xl font-bold text-[#141517] dark:text-[#F0F2F5] mt-1">
+            Laboratory Engineering Notebook
+          </h2>
+          <p class="text-xs sm:text-sm text-[#5C5F66] dark:text-[#A0A6AF] mt-1">
+            Official engineering log entries recording architectural decisions, hardware roadblocks, and verification status.
+          </p>
+        </div>
+
+        <div class="border-l-2 border-[#D5D5CF] dark:border-[#2E3238] ml-2 space-y-8 pl-6">
+
+          <!-- ENTRY 01 -->
+          <div class="relative space-y-2">
+            <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white dark:bg-[#181A1D] border-2 border-[#717680] dark:border-[#888E96]"></div>
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="font-bold text-[#141517] dark:text-[#F0F2F5]">ENTRY 01</span>
+              <span class="text-[#8E9298]">&bull;</span>
+              <span class="text-[#5C5F66] dark:text-[#888E96]">Baseline Architecture &bull; Gowin EDA Formulation</span>
+            </div>
+            <h3 class="text-sm font-bold text-[#141517] dark:text-[#E8EAEF]">
+              Microarchitecture Specification &amp; Native Gowin EDA Simulation
+            </h3>
+            <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+              Formulated the initial UART microarchitecture specifications. Configured the project environment natively within the <strong>Gowin EDA (Gowin YunYuan)</strong> suite. Authored behavioral Verilog RTL modules and executed testbench simulations using Gowin EDA's integrated simulation tools, validating finite state machine transitions, 8-N-1 packet framing compliance, and clock division accuracy at 9600 Baud.
+            </p>
+          </div>
+
+          <!-- ENTRY 02 -->
+          <div class="relative space-y-2">
+            <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white dark:bg-[#181A1D] border-2 border-terracotta-700 dark:border-[#E07A5F]"></div>
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="font-bold text-terracotta-700 dark:text-[#E07A5F]">ENTRY 02</span>
+              <span class="text-[#8E9298]">&bull;</span>
+              <span class="text-[#5C5F66] dark:text-[#888E96]">Roadblock &bull; Hardware Reallocation</span>
+            </div>
+            <h3 class="text-sm font-bold text-[#141517] dark:text-[#E8EAEF]">
+              Departmental Board Access Policy Constraint &amp; Alternative Sourcing
+            </h3>
+            <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+              Encountered a critical roadblock during hardware scheduling: the ECE department announced that Artix-7 FPGA development kits were reserved exclusively for final-year capstone batches. To avert schedule delays, the team evaluated viable low-cost FPGA alternatives and procured a Sipeed Tang Nano 9K development board equipped with the Gowin GW1NR-9C FPGA, seamlessly matching our Gowin EDA project environment.
+            </p>
+          </div>
+
+          <!-- ENTRY 03 -->
+          <div class="relative space-y-2">
+            <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-white dark:bg-[#181A1D] border-2 border-[#1B365D] dark:border-[#4B6B94]"></div>
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="font-bold text-marine-800 dark:text-[#8BB2DF]">ENTRY 03</span>
+              <span class="text-[#8E9298]">&bull;</span>
+              <span class="text-[#5C5F66] dark:text-[#888E96]">GowinSynthesis &bull; Clock Recalibration</span>
+            </div>
+            <h3 class="text-sm font-bold text-[#141517] dark:text-[#E8EAEF]">
+              Prescaler Math Porting to 27.0 MHz &amp; Gowin Physical Pin Constraints
+            </h3>
+            <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+              Synthesised the design using <strong>GowinSynthesis</strong> in Gowin EDA V1.9.9. The prescaler modulo counter was mathematically recomputed for the Tang Nano's 27.0 MHz crystal oscillator:
+              <br>
+              <span class="font-mono text-xs bg-draft-100 dark:bg-[#202328] px-2 py-1 rounded inline-block my-1.5 text-marine-800 dark:text-[#8BB2DF] border border-[#DDDCD7] dark:border-[#272A30]">
+                DIVISOR = round(27,000,000 / 9600) = 2813 &bull; Synthesized: 9598.29 Baud &bull; Error: -0.018%
+              </span>
+              <br>
+              Authored physical pin constraints (<code class="font-mono text-xs bg-draft-100 dark:bg-[#202328] px-1 py-0.5 rounded">tang_nano_9k.cst</code>) assigning the master clock to Pin 52, tactile reset to Pin 4, and serial transmission out to Pin 17.
+            </p>
+          </div>
+
+          <!-- ENTRY 04 -->
+          <div class="relative space-y-2">
+            <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-terracotta-700 dark:bg-[#E07A5F] border-2 border-white dark:border-[#181A1D]"></div>
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="font-bold text-terracotta-700 dark:text-[#E07A5F]">ENTRY 04 [ACTIVE SPRINT]</span>
+              <span class="text-[#8E9298]">&bull;</span>
+              <span class="text-[#5C5F66] dark:text-[#888E96]">Transmitter Validation</span>
+            </div>
+            <h3 class="text-sm font-bold text-[#141517] dark:text-[#E8EAEF]">
+              Gowin Bitstream Generation &amp; Standalone TX Bring-Up
+            </h3>
+            <p class="text-xs sm:text-sm text-[#4E5259] dark:text-[#A0A6AF] leading-relaxed">
+              Currently executing standalone physical verification of the Transmitter logic. Bitstreams generated via Gowin EDA's Place &amp; Route flow (<code class="font-mono text-xs bg-draft-100 dark:bg-[#202328] px-1 py-0.5 rounded">.fs</code> file) are loaded into GW1NR-9C SRAM via the Gowin Programmer. The hardware emits repeated ASCII character streams through Pin 17 directly across the onboard USB-to-UART bridge into PuTTY at 9600-8N1. Confirming clear frame delineation, stable 104.2 &mu;s bit times, and zero buffer overruns before implementing the 16&times; oversampling RX module.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =================================================== -->
+    <!-- TAB 4: ENGINEERING UTILITIES & INTERACTIVE TOOLS     -->
+    <!-- =================================================== -->
+    <div id="tab-tools" class="hidden space-y-6">
+
+      <!-- Tool 1 & Tool 2 in Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Calculator 1: Dual Platform Prescaler Comparison -->
+        <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-marine-800 dark:text-[#8BB2DF] text-xs font-bold uppercase tracking-wider font-mono">
+              <i data-lucide="calculator" class="w-4 h-4"></i>
+              <span>Prescaler &amp; Drift Calculator</span>
+            </div>
+            <span class="text-[10px] font-mono text-[#717680] dark:text-[#888E96]">Div = F_clk / Baud</span>
+          </div>
+
+          <p class="text-xs text-[#5C5F66] dark:text-[#A0A6AF]">
+            Evaluate integer clock division quantization between the 27 MHz Tang Nano 9K and the 50 MHz Artix-7 baseline across standard baud rates.
+          </p>
+
+          <div class="flex items-center space-x-3 text-xs">
+            <label for="select-baud" class="text-[#5C5F66] dark:text-[#9AA0A9] font-medium whitespace-nowrap">Target Baud Rate:</label>
+            <select id="select-baud" onchange="calculateBaud()" 
+                    class="flex-grow bg-draft-50 dark:bg-[#141517] border border-[#D5D5D0] dark:border-[#2D3138] rounded px-3 py-1.5 font-mono text-xs text-[#141517] dark:text-white outline-none focus:border-marine-800">
+              <option value="9600" selected>9,600 bps (Default Project Standard)</option>
+              <option value="19200">19,200 bps</option>
+              <option value="38400">38,400 bps</option>
+              <option value="57600">57,600 bps</option>
+              <option value="115200">115,200 bps</option>
+            </select>
+          </div>
+
+          <!-- Side-by-Side Platform Breakdown -->
+          <div class="space-y-3 pt-1">
+            <!-- Tang Nano 9K -->
+            <div class="p-3 bg-draft-50 dark:bg-[#141517] rounded border border-[#DDDCD7] dark:border-[#26292F] space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-[#141517] dark:text-[#F0F2F5] flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-marine-800 dark:bg-[#8BB2DF]"></span>
+                  Deployed: Sipeed Tang Nano 9K (27.0 MHz)
+                </span>
+                <span class="text-[10px] font-mono text-marine-800 dark:text-[#8BB2DF] font-semibold">Active Silicon</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 font-mono text-center text-xs">
+                <div class="p-2 bg-white dark:bg-[#1B1D21] rounded border border-[#E4E4E0] dark:border-[#292C32]">
+                  <span class="text-[10px] text-[#717680] dark:text-[#888E96] font-sans block">Divisor Ticks</span>
+                  <span id="res-nano-div" class="text-sm font-bold text-[#141517] dark:text-white">2813</span>
+                </div>
+                <div class="p-2 bg-white dark:bg-[#1B1D21] rounded border border-[#E4E4E0] dark:border-[#292C32]">
+                  <span class="text-[10px] text-[#717680] dark:text-[#888E96] font-sans block">Actual Baud</span>
+                  <span id="res-nano-actual" class="text-sm font-bold text-[#141517] dark:text-white">9,598</span>
+                </div>
+                <div class="p-2 bg-white dark:bg-[#1B1D21] rounded border border-[#E4E4E0] dark:border-[#292C32]">
+                  <span class="text-[10px] text-[#717680] dark:text-[#888E96] font-sans block">Clock Drift</span>
+                  <span id="res-nano-err" class="text-sm font-bold text-[#2D5A27] dark:text-[#87C380]">-0.018%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Artix-7 Baseline -->
+            <div class="p-3 bg-draft-50/50 dark:bg-[#141517]/50 rounded border border-[#E5E5E0] dark:border-[#22252A] space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-[#5C5F66] dark:text-[#A0A6AF]">
+                  Baseline: AMD Xilinx Artix-7 (50.0 MHz)
+                </span>
+                <span class="text-[10px] font-mono text-[#8E9298]">RTL Reference</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 font-mono text-center text-xs">
+                <div class="p-2 bg-white dark:bg-[#1B1D21] rounded border border-[#E4E4E0] dark:border-[#292C32]">
+                  <span class="text-[10px] text-[#717680] dark:text-[#888E96] font-sans block">Divisor Ticks</span>
+                  <span id="res-artix-div" class="text-sm font-bold text-[#5C5F66] dark:text-[#A0A6AF]">5208</span>
+                </div>
+                <div class="p-2 bg-white dark:bg-[#1B1D21] rounded border border-[#E4E4E0] dark:border-[#292C32]">
+                  <span class="text-[10px] text-[#717680] dark:text-[#888E96] font-sans block">Actual Baud</span>
+                  <span id="res-artix-actual" class="text-sm font-bold text-[#5C5F66] dark:text-[#A0A6AF]">9,601</span>
+                </div>
+                <div class="p-2 bg-white dark:bg-[#1B1D21] rounded border border-[#E4E4E0] dark:border-[#292C32]">
+                  <span class="text-[10px] text-[#717680] dark:text-[#888E96] font-sans block">Clock Drift</span>
+                  <span id="res-artix-err" class="text-sm font-bold text-[#2D5A27] dark:text-[#87C380]">+0.006%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-[#717680] dark:text-[#888E96] pt-1 border-t border-[#EAEAE6] dark:border-[#23262B]">
+            <span>Nominal Bit Duration: <strong id="res-bit-period" class="font-mono text-[#141517] dark:text-[#E8EAEF]">104.17 &mu;s</strong></span>
+            <span class="text-[#2D5A27] dark:text-[#87C380] font-semibold flex items-center gap-1">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Margin &lt; &plusmn;2.5% Limit
+            </span>
+          </div>
+        </div>
+
+        <!-- Tool 2: Serial Frame Timing & Waveform Renderer -->
+        <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-marine-800 dark:text-[#8BB2DF] text-xs font-bold uppercase tracking-wider font-mono">
+              <i data-lucide="activity" class="w-4 h-4"></i>
+              <span>Serial Frame Timing Visualiser</span>
+            </div>
+            <span class="text-[10px] font-mono text-[#717680] dark:text-[#888E96]">8-N-1 Default</span>
+          </div>
+
+          <p class="text-xs text-[#5C5F66] dark:text-[#A0A6AF]">
+            Inspect serialization packet framing (LSB-first) and mid-bit sample points for any ASCII character.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <label for="input-char" class="text-[#5C5F66] dark:text-[#9AA0A9] block mb-1 font-medium">Input Character:</label>
+              <div class="flex items-center space-x-2">
+                <input type="text" id="input-char" value="U" maxlength="1" oninput="renderWaveform()"
+                       class="w-14 bg-draft-50 dark:bg-[#141517] border border-[#D5D5D0] dark:border-[#2D3138] text-center font-mono font-bold text-sm text-[#141517] dark:text-white rounded py-1 outline-none focus:border-marine-800">
+                <span id="char-telemetry" class="font-mono text-xs text-[#5C5F66] dark:text-[#888E96]">0x55 (01010101)</span>
+              </div>
+            </div>
+            <div>
+              <label for="select-parity" class="text-[#5C5F66] dark:text-[#9AA0A9] block mb-1 font-medium">Parity Framing:</label>
+              <select id="select-parity" onchange="renderWaveform()" 
+                      class="w-full bg-draft-50 dark:bg-[#141517] border border-[#D5D5D0] dark:border-[#2D3138] rounded px-2 py-1 font-mono text-xs text-[#141517] dark:text-white outline-none focus:border-marine-800">
+                <option value="none" selected>8-N-1 (None - Default)</option>
+                <option value="even">8-E-1 (Even Parity)</option>
+                <option value="odd">8-O-1 (Odd Parity)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- High-DPI Drafting Canvas Container -->
+          <div class="bg-draft-50 dark:bg-[#121315] p-3 rounded border border-[#E0E0DB] dark:border-[#24272D]">
+            <canvas id="canvas-wave" height="85" class="w-full rounded"></canvas>
+            <div class="flex justify-between text-[10px] font-mono text-[#717680] dark:text-[#888E96] px-1 mt-1">
+              <span>IDLE (Mark)</span>
+              <span>START (0)</span>
+              <span>D0 &rarr; D7 (Data Bits)</span>
+              <span id="waveform-legend-end">STOP (1)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tool 3: Transmitter FSM State Stepper -->
+      <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#EAEAE6] dark:border-[#23262B] gap-4">
+          <div>
+            <div class="flex items-center space-x-2 text-marine-800 dark:text-[#8BB2DF] text-xs font-bold uppercase tracking-wider font-mono">
+              <i data-lucide="git-pull-request" class="w-4 h-4"></i>
+              <span>Finite State Machine Stepper &bull; uart_tx.v</span>
+            </div>
+            <h3 class="text-base font-bold text-[#141517] dark:text-[#F0F2F5] mt-0.5">
+              Transmitter 4-State Sequential Pipeline
+            </h3>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="resetFsm()" 
+                    class="px-3 py-1.5 rounded bg-draft-100 dark:bg-[#202328] hover:bg-draft-200 dark:hover:bg-[#262A31] text-xs font-mono text-[#333538] dark:text-[#C8CCD2] border border-[#D5D5D0] dark:border-[#2D3138] transition-colors">
+              Reset FSM
+            </button>
+            <button onclick="stepFsm()" 
+                    class="px-4 py-1.5 rounded bg-marine-800 hover:bg-marine-900 dark:bg-[#32527B] dark:hover:bg-[#3D6394] text-xs font-mono text-white font-bold flex items-center gap-1.5 transition-colors">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <span>Step Baud Clock</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4-Stage State Card Track -->
+        <div id="fsm-card-track" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          <!-- Injected dynamically via JavaScript -->
+        </div>
+
+        <!-- Hardware Register State Monitors -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-draft-50 dark:bg-[#141517] p-3 rounded border border-[#E0E0DB] dark:border-[#24272D] font-mono text-xs">
+          <div>
+            <span class="text-[10px] text-[#717680] dark:text-[#888E96] block font-sans uppercase">Current FSM State</span>
+            <span id="reg-state-name" class="font-bold text-marine-800 dark:text-[#8BB2DF]">STATE_IDLE</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-[#717680] dark:text-[#888E96] block font-sans uppercase">Physical TX Pin (Pin 17)</span>
+            <span id="reg-tx-pin" class="font-bold text-[#141517] dark:text-[#ECEEF2]">1 (High / Mark)</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-[#717680] dark:text-[#888E96] block font-sans uppercase">Bit Counter (bit_idx)</span>
+            <span id="reg-bit-idx" class="font-bold text-terracotta-700 dark:text-[#E07A5F]">0</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-[#717680] dark:text-[#888E96] block font-sans uppercase">tx_busy Register</span>
+            <span id="reg-busy-flag" class="font-bold text-[#5C5F66] dark:text-[#A0A6AF]">0 (Ready)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CST Physical Pinout Configuration Table -->
+      <div class="bg-white dark:bg-[#181A1D] rounded border border-[#DDDCD7] dark:border-[#272A30] p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-marine-800 dark:text-[#8BB2DF] text-xs font-bold uppercase tracking-wider font-mono">
+            <i data-lucide="cpu" class="w-4 h-4"></i>
+            <span>Physical Pin Mapping Matrix (tang_nano_9k.cst)</span>
+          </div>
+          <span class="text-[10px] font-mono text-[#717680] dark:text-[#888E96]">Gowin Floorplan Syntax</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono divide-y divide-[#E4E4E1] dark:divide-[#26292F]">
+            <thead class="bg-draft-50 dark:bg-[#1D2024] text-[#5C5F66] dark:text-[#9AA0A9]">
+              <tr>
+                <th class="p-2.5">Port Signal</th>
+                <th class="p-2.5 font-sans">Direction</th>
+                <th class="p-2.5">Tang Nano 9K Package Pin</th>
+                <th class="p-2.5">I/O Standard</th>
+                <th class="p-2.5 font-sans">Target Hardware Peripheral</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#EAEAE6] dark:divide-[#23262B] text-[#333538] dark:text-[#C8CCD2]">
+              <tr>
+                <td class="p-2.5 font-bold text-marine-800 dark:text-[#8BB2DF]">sys_clk</td>
+                <td class="p-2.5 font-sans">Input</td>
+                <td class="p-2.5 font-bold">Pin 52</td>
+                <td class="p-2.5">LVCMOS33</td>
+                <td class="p-2.5 font-sans">27.000 MHz Crystal Oscillator</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-marine-800 dark:text-[#8BB2DF]">sys_rst_n</td>
+                <td class="p-2.5 font-sans">Input</td>
+                <td class="p-2.5 font-bold">Pin 4</td>
+                <td class="p-2.5">LVCMOS33 (PULL_UP)</td>
+                <td class="p-2.5 font-sans">Onboard S1 Tactile Push-Button (Active Low)</td>
+              </tr>
+              <tr class="bg-draft-50/70 dark:bg-[#1D2127]">
+                <td class="p-2.5 font-bold text-marine-800 dark:text-[#8BB2DF]">uart_tx</td>
+                <td class="p-2.5 font-sans">Output</td>
+                <td class="p-2.5 font-bold text-terracotta-700 dark:text-[#E07A5F]">Pin 17</td>
+                <td class="p-2.5">LVCMOS33 (DRIVE=8)</td>
+                <td class="p-2.5 font-sans font-medium text-[#141517] dark:text-white">Transmitter Out &rarr; Onboard FTDI USB-UART Bridge</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-[#717680] dark:text-[#888E96]">uart_rx</td>
+                <td class="p-2.5 font-sans">Input</td>
+                <td class="p-2.5 font-bold text-[#717680] dark:text-[#888E96]">Pin 18</td>
+                <td class="p-2.5">LVCMOS33</td>
+                <td class="p-2.5 font-sans text-[#717680] dark:text-[#888E96]">Receiver In &larr; FTDI Bridge (Phase 3 Integration)</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-marine-800 dark:text-[#8BB2DF]">tx_busy</td>
+                <td class="p-2.5 font-sans">Output</td>
+                <td class="p-2.5 font-bold">Pin 10</td>
+                <td class="p-2.5">LVCMOS33</td>
+                <td class="p-2.5 font-sans">Onboard Active-Low User Status LED 0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Editorial Academic Footer -->
+  <footer class="bg-white dark:bg-[#16181B] border-t border-[#E2E2DF] dark:border-[#23262B] py-6 text-xs text-[#5C5F66] dark:text-[#8E949E] transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <div class="font-medium text-[#141517] dark:text-[#E8EAEF]">
+          KLE Technological University &bull; School of Electronics &amp; Communication Engineering
+        </div>
+        <div class="text-[11px] text-[#717680] dark:text-[#828892] mt-0.5">
+          Mini-Project 2024–25 &bull; Team 05 (Division B) &bull; Academic Mentor: Prof. Preeti S Pillai
+        </div>
+      </div>
+      <div class="font-mono text-xs text-right">
+        <a href="https://github.com/Bee-JT/UART-Transceiver-8bit.git" target="_blank" rel="noopener noreferrer" 
+           class="text-marine-800 dark:text-[#8BB2DF] hover:underline">
+          github.com/Bee-JT/UART-Transceiver-8bit
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript Logic -->
+  <script>
+    // ==========================================
+    // THEME SWITCHING ENGINE
+    // ==========================================
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        localStorage.setItem('team05_theme', 'light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('team05_theme', 'dark');
+      }
+      updateThemeIcon();
+      renderWaveform();
+      renderFsm();
+    }
+
+    function updateThemeIcon() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const icon = document.getElementById('theme-toggle-icon');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
+
+    // ==========================================
+    // TAB MANAGEMENT
+    // ==========================================
+    function switchTab(tabId) {
+      const tabs = ['overview', 'team', 'notebook', 'tools'];
+      tabs.forEach(t => {
+        const el = document.getElementById('tab-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (el) el.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('text-marine-800', 'dark:text-[#8BB2DF]', 'bg-draft-100', 'dark:bg-[#202328]');
+          btn.classList.add('text-[#5C5F66]', 'dark:text-[#9BA1A8]');
+        }
+      });
+
+      const activeSection = document.getElementById('tab-' + tabId);
+      const activeBtn = document.getElementById('tab-btn-' + tabId);
+      if (activeSection) activeSection.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.remove('text-[#5C5F66]', 'dark:text-[#9BA1A8]');
+        activeBtn.classList.add('text-marine-800', 'dark:text-[#8BB2DF]', 'bg-draft-100', 'dark:bg-[#202328]');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (tabId === 'tools') {
+        setTimeout(renderWaveform, 60);
+      }
+    }
+
+    // ==========================================
+    // PRESCALER CALCULATOR ENGINE
+    // ==========================================
+    function calculateBaud() {
+      const baud = parseFloat(document.getElementById('select-baud').value) || 9600;
+
+      // 1. Sipeed Tang Nano 9K (27.0 MHz)
+      const fNano = 27000000;
+      const divNano = Math.round(fNano / baud);
+      const actualNano = fNano / divNano;
+      const errNano = ((actualNano - baud) / baud) * 100;
+
+      document.getElementById('res-nano-div').textContent = divNano;
+      document.getElementById('res-nano-actual').textContent = Math.round(actualNano).toLocaleString();
+      document.getElementById('res-nano-err').textContent = (errNano >= 0 ? '+' : '') + errNano.toFixed(3) + '%';
+
+      // 2. AMD Xilinx Artix-7 Baseline (50.0 MHz)
+      const fArtix = 50000000;
+      const divArtix = Math.round(fArtix / baud);
+      const actualArtix = fArtix / divArtix;
+      const errArtix = ((actualArtix - baud) / baud) * 100;
+
+      document.getElementById('res-artix-div').textContent = divArtix;
+      document.getElementById('res-artix-actual').textContent = Math.round(actualArtix).toLocaleString();
+      document.getElementById('res-artix-err').textContent = (errArtix >= 0 ? '+' : '') + errArtix.toFixed(3) + '%';
+
+      // Bit period calculation
+      const bitPeriodUs = (1000000 / baud).toFixed(2);
+      document.getElementById('res-bit-period').textContent = `${bitPeriodUs} \u03BCs`;
+    }
+
+    // ==========================================
+    // SERIAL WAVEFORM RENDERER (HIGH-DPI)
+    // ==========================================
+    function renderWaveform() {
+      const canvas = document.getElementById('canvas-wave');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const charInput = document.getElementById('input-char').value || 'U';
+      const parityMode = document.getElementById('select-parity').value;
+      const charCode = charInput.charCodeAt(0);
+
+      const binaryStr = charCode.toString(2).padStart(8, '0');
+      const hexStr = '0x' + charCode.toString(16).toUpperCase().padStart(2, '0');
+      document.getElementById('char-telemetry').textContent = `${hexStr} (${binaryStr})`;
+
+      // Assemble UART Frame bits (LSB-first)
+      const bits = [1, 0]; // IDLE(1), START(0)
+      const labels = ['IDL', 'STR'];
+
+      let ones = 0;
+      for (let i = 7; i >= 0; i--) {
+        const b = parseInt(binaryStr[i]);
+        if (b === 1) ones++;
+        bits.push(b);
+        labels.push(`D${7 - i}:${b}`);
+      }
+
+      if (parityMode === 'even') {
+        const par = (ones % 2 === 0) ? 0 : 1;
+        bits.push(par);
+        labels.push(`PAR:${par}`);
+      } else if (parityMode === 'odd') {
+        const par = (ones % 2 === 0) ? 1 : 0;
+        bits.push(par);
+        labels.push(`PAR:${par}`);
+      }
+
+      bits.push(1); // STOP(1)
+      labels.push('STP');
+      bits.push(1); // IDLE(1)
+      labels.push('IDL');
+
+      // High-DPI canvas scaling
+      const isDark = document.documentElement.classList.contains('dark');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const width = rect.width - 24;
+      canvas.width = width * dpr;
+      canvas.height = 85 * dpr;
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+
+      ctx.clearRect(0, 0, width, 85);
+
+      const step = width / bits.length;
+      const highY = 22;
+      const lowY = 56;
+
+      // Draw subtle grid subdivisions
+      ctx.strokeStyle = isDark ? '#23262B' : '#E8E8E4';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= bits.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * step, 8);
+        ctx.lineTo(i * step, 68);
+        ctx.stroke();
+      }
+
+      // Draw Waveform Trace (Editorial Technical Marine / Steel Blue)
+      ctx.strokeStyle = isDark ? '#8BB2DF' : '#1B365D';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(0, bits[0] === 1 ? highY : lowY);
+
+      for (let i = 0; i < bits.length; i++) {
+        const yVal = bits[i] === 1 ? highY : lowY;
+        const xStart = i * step;
+        const xEnd = (i + 1) * step;
+
+        ctx.lineTo(xStart, yVal);
+        ctx.lineTo(xEnd, yVal);
+      }
+      ctx.stroke();
+
+      // Mid-bit sampling strobes for data bits (Strobes at 50% bit interval)
+      ctx.strokeStyle = isDark ? 'rgba(224, 122, 95, 0.45)' : 'rgba(154, 52, 18, 0.4)';
+      ctx.setLineDash([2, 3]);
+      ctx.lineWidth = 1;
+      for (let i = 2; i <= 9; i++) {
+        const midX = i * step + step / 2;
+        ctx.beginPath();
+        ctx.moveTo(midX, highY - 8);
+        ctx.lineTo(midX, lowY + 8);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      // Bit labels
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+
+      for (let i = 0; i < bits.length; i++) {
+        const midX = i * step + step / 2;
+        let color = isDark ? '#888E96' : '#64645C';
+
+        if (labels[i] === 'STR') color = isDark ? '#E07A5F' : '#9A3412';
+        else if (labels[i].startsWith('PAR')) color = isDark ? '#B392F0' : '#6B46C1';
+        else if (labels[i] === 'STP') color = isDark ? '#87C380' : '#2D5A27';
+
+        ctx.fillStyle = color;
+        ctx.fillText(labels[i], midX, 76);
+      }
+    }
+
+    // ==========================================
+    // TRANSMITTER FSM STEPPER
+    // ==========================================
+    const FSM_STEPS = [
+      { name: 'STATE_IDLE', pin: '1 (High / Mark)', busy: '0 (Ready)', desc: 'Holding UART line high; awaiting tx_start strobe.' },
+      { name: 'STATE_START', pin: '0 (Start Low)', busy: '1 (Transmitting)', desc: 'Asserting logic 0 for 1 baud period (104.17 \u03BCs).' },
+      { name: 'STATE_DATA', pin: 'Data Bit (LSB)', busy: '1 (Transmitting)', desc: 'Sequentially serializing bits D0 to D7 on each baud strobe.' },
+      { name: 'STATE_STOP', pin: '1 (Stop High)', busy: '1 (Completing)', desc: 'Asserting high stop bit; emitting tx_done pulse.' }
+    ];
+
+    let currentFsmIdx = 0;
+    let currentBitCounter = 0;
+
+    function renderFsm() {
+      const container = document.getElementById('fsm-card-track');
+      if (!container) return;
+      container.innerHTML = '';
+
+      FSM_STEPS.forEach((step, idx) => {
+        const isActive = idx === currentFsmIdx;
+        const card = document.createElement('div');
+        card.className = isActive
+          ? "p-3 rounded border border-marine-800 dark:border-[#4B6B94] bg-white dark:bg-[#1E2126] shadow-sm transition-all"
+          : "p-3 rounded border border-[#E0E0DB] dark:border-[#26292F] bg-draft-50/50 dark:bg-[#141517] opacity-60 transition-all";
+
+        card.innerHTML = `
+          <div class="text-[10px] font-mono uppercase text-[#717680] dark:text-[#888E96]">State 0${idx}</div>
+          <div class="text-xs font-bold text-[#141517] dark:text-white mt-0.5">${step.name}</div>
+          <div class="text-[11px] text-[#5C5F66] dark:text-[#A0A6AF] mt-1 font-sans leading-tight">${step.desc}</div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Update Register Display
+      const curr = FSM_STEPS[currentFsmIdx];
+      document.getElementById('reg-state-name').textContent = curr.name;
+      document.getElementById('reg-busy-flag').textContent = curr.busy;
+      document.getElementById('reg-bit-idx').textContent = (currentFsmIdx === 2) ? currentBitCounter : 0;
+
+      if (currentFsmIdx === 2) {
+        document.getElementById('reg-tx-pin').textContent = `Bit D${currentBitCounter} (${currentBitCounter % 2 === 0 ? '1' : '0'})`;
+      } else {
+        document.getElementById('reg-tx-pin').textContent = curr.pin;
+      }
+    }
+
+    function stepFsm() {
+      if (currentFsmIdx === 0) {
+        currentFsmIdx = 1;
+        currentBitCounter = 0;
+      } else if (currentFsmIdx === 1) {
+        currentFsmIdx = 2;
+        currentBitCounter = 0;
+      } else if (currentFsmIdx === 2) {
+        if (currentBitCounter < 7) {
+          currentBitCounter++;
+        } else {
+          currentFsmIdx = 3;
+        }
+      } else if (currentFsmIdx === 3) {
+        currentFsmIdx = 0;
+        currentBitCounter = 0;
+      }
+      renderFsm();
+    }
+
+    function resetFsm() {
+      currentFsmIdx = 0;
+      currentBitCounter = 0;
+      renderFsm();
+    }
+
+    // ==========================================
+    // INITIALIZATION ON LOAD
+    // ==========================================
+    window.onload = function() {
+      updateThemeIcon();
+      calculateBaud();
+      renderWaveform();
+      renderFsm();
+      lucide.createIcons();
+
+      window.addEventListener('resize', () => {
+        renderWaveform();
+      });
+    };
+  </script>
+</body>
+</html>
