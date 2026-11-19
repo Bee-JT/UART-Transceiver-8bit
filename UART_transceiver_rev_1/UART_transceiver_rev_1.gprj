@@ -1,0 +1,27 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW1NR-9C" pn="GW1NR-LV9QN88PC6/I5">gw1nr9c-004</Device>
+    <FileList>
+        <File path="src/baud_gen.v" type="file.verilog" enable="1"/>
+        <File path="src/byte_fifo.v" type="file.verilog" enable="1"/>
+        <File path="src/gao_helper.v" type="file.verilog" enable="1"/>
+        <File path="src/led_latch.v" type="file.verilog" enable="1"/>
+        <File path="src/link_rx_catcher.v" type="file.verilog" enable="1"/>
+        <File path="src/pc_rx_catcher.v" type="file.verilog" enable="1"/>
+        <File path="src/pc_tx_arbiter.v" type="file.verilog" enable="1"/>
+        <File path="src/piso.v" type="file.verilog" enable="1"/>
+        <File path="src/por_reset.v" type="file.verilog" enable="1"/>
+        <File path="src/sipo.v" type="file.verilog" enable="1"/>
+        <File path="src/sync_2ff.v" type="file.verilog" enable="1"/>
+        <File path="src/transceiver.v" type="file.verilog" enable="1"/>
+        <File path="src/uart_rx.v" type="file.verilog" enable="1"/>
+        <File path="src/uart_rx_ctrl.v" type="file.verilog" enable="1"/>
+        <File path="src/uart_tx.v" type="file.verilog" enable="1"/>
+        <File path="src/uart_tx_ctrl.v" type="file.verilog" enable="1"/>
+        <File path="src/transceiver.cst" type="file.cst" enable="1"/>
+        <File path="src/clk.sdc" type="file.sdc" enable="1"/>
+    </FileList>
+</Project>

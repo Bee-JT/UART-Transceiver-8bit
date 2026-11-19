@@ -1,0 +1,240 @@
+[
+ {
+  "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+  "InstLine" : 12,
+  "InstName" : "transceiver",
+  "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+  "ModuleLine" : 12,
+  "ModuleName" : "transceiver",
+  "SubInsts" : [
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 25,
+    "InstName" : "por_inst",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/por_reset.v",
+    "ModuleLine" : 6,
+    "ModuleName" : "por_reset"
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 33,
+    "InstName" : "pc_catcher",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/pc_rx_catcher.v",
+    "ModuleLine" : 5,
+    "ModuleName" : "pc_rx_catcher",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/pc_rx_catcher.v",
+      "InstLine" : 13,
+      "InstName" : "core",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+      "ModuleLine" : 9,
+      "ModuleName" : "uart_rx",
+      "SubInsts" : [
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 22,
+        "InstName" : "input_sync",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/sync_2ff.v",
+        "ModuleLine" : 5,
+        "ModuleName" : "sync_2ff"
+       },
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 29,
+        "InstName" : "rx_baud",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/baud_gen.v",
+        "ModuleLine" : 13,
+        "ModuleName" : "baud_gen"
+       },
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 33,
+        "InstName" : "ctrl",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx_ctrl.v",
+        "ModuleLine" : 12,
+        "ModuleName" : "uart_rx_ctrl"
+       },
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 39,
+        "InstName" : "rx_sipo",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/sipo.v",
+        "ModuleLine" : 7,
+        "ModuleName" : "sipo"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 38,
+    "InstName" : "link_catcher",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/link_rx_catcher.v",
+    "ModuleLine" : 5,
+    "ModuleName" : "link_rx_catcher",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/link_rx_catcher.v",
+      "InstLine" : 13,
+      "InstName" : "core",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+      "ModuleLine" : 9,
+      "ModuleName" : "uart_rx",
+      "SubInsts" : [
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 22,
+        "InstName" : "input_sync",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/sync_2ff.v",
+        "ModuleLine" : 5,
+        "ModuleName" : "sync_2ff"
+       },
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 29,
+        "InstName" : "rx_baud",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/baud_gen.v",
+        "ModuleLine" : 13,
+        "ModuleName" : "baud_gen"
+       },
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 33,
+        "InstName" : "ctrl",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx_ctrl.v",
+        "ModuleLine" : 12,
+        "ModuleName" : "uart_rx_ctrl"
+       },
+       {
+        "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_rx.v",
+        "InstLine" : 39,
+        "InstName" : "rx_sipo",
+        "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/sipo.v",
+        "ModuleLine" : 7,
+        "ModuleName" : "sipo"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 49,
+    "InstName" : "f1_pc_to_link",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/byte_fifo.v",
+    "ModuleLine" : 6,
+    "ModuleName" : "byte_fifo"
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 55,
+    "InstName" : "link_tx_inst",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+    "ModuleLine" : 9,
+    "ModuleName" : "uart_tx",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+      "InstLine" : 24,
+      "InstName" : "tx_baud",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/baud_gen.v",
+      "ModuleLine" : 13,
+      "ModuleName" : "baud_gen"
+     },
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+      "InstLine" : 28,
+      "InstName" : "ctrl",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx_ctrl.v",
+      "ModuleLine" : 8,
+      "ModuleName" : "uart_tx_ctrl"
+     },
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+      "InstLine" : 33,
+      "InstName" : "tx_piso",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/piso.v",
+      "ModuleLine" : 8,
+      "ModuleName" : "piso"
+     }
+    ]
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 67,
+    "InstName" : "f2_link_to_pc",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/byte_fifo.v",
+    "ModuleLine" : 6,
+    "ModuleName" : "byte_fifo"
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 73,
+    "InstName" : "f3_echo_to_pc",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/byte_fifo.v",
+    "ModuleLine" : 6,
+    "ModuleName" : "byte_fifo"
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 82,
+    "InstName" : "arbiter",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/pc_tx_arbiter.v",
+    "ModuleLine" : 8,
+    "ModuleName" : "pc_tx_arbiter"
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 89,
+    "InstName" : "pc_tx_inst",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+    "ModuleLine" : 9,
+    "ModuleName" : "uart_tx",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+      "InstLine" : 24,
+      "InstName" : "tx_baud",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/baud_gen.v",
+      "ModuleLine" : 13,
+      "ModuleName" : "baud_gen"
+     },
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+      "InstLine" : 28,
+      "InstName" : "ctrl",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx_ctrl.v",
+      "ModuleLine" : 8,
+      "ModuleName" : "uart_tx_ctrl"
+     },
+     {
+      "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/uart_tx.v",
+      "InstLine" : 33,
+      "InstName" : "tx_piso",
+      "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/piso.v",
+      "ModuleLine" : 8,
+      "ModuleName" : "piso"
+     }
+    ]
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 96,
+    "InstName" : "leds",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/led_latch.v",
+    "ModuleLine" : 4,
+    "ModuleName" : "led_latch"
+   },
+   {
+    "InstFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/transceiver.v",
+    "InstLine" : 106,
+    "InstName" : "gao_inst",
+    "ModuleFile" : "C:/Gowin/Gowin_V1.9.11.03_Education_x64/IDE/bin/Documents/UART_transceiver_rev_1/src/gao_helper.v",
+    "ModuleLine" : 7,
+    "ModuleName" : "gao_helper"
+   }
+  ]
+ }
+]

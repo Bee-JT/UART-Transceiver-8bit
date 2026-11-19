@@ -1,0 +1,30 @@
+// ===== transceiver.cst - same for both boards =====
+// 27 MHz system clock
+IO_LOC "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// Onboard USB-UART (BL702): FPGA RX = pin 18, FPGA TX = pin 17
+IO_LOC "pc_rx_pin" 18;
+IO_PORT "pc_rx_pin" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "pc_tx_pin" 17;
+IO_PORT "pc_tx_pin" IO_TYPE=LVCMOS33;
+
+// Link to the other board (3.3 V): my pin 25 -> their pin 26, my pin 26 <- their pin 25
+IO_LOC "link_tx" 25;
+IO_PORT "link_tx" IO_TYPE=LVCMOS33;
+IO_LOC "link_rx" 26;
+IO_PORT "link_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// LEDs (Bank 3 - 1.8V, active-low)
+IO_LOC "led[0]" 10;
+IO_LOC "led[1]" 11;
+IO_LOC "led[2]" 13;
+IO_LOC "led[3]" 14;
+IO_LOC "led[4]" 15;
+IO_LOC "led[5]" 16;
+IO_PORT "led[0]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_PORT "led[1]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_PORT "led[2]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_PORT "led[3]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_PORT "led[4]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;
+IO_PORT "led[5]" IO_TYPE=LVCMOS18 PULL_MODE=UP DRIVE=8;

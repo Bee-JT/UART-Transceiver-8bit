@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-synthesis-project>
+<Project>
+    <Version>beta</Version>
+    <Device id="GW1NR-9C" package="QFN88P" speed="6" partNumber="GW1NR-LV9QN88PC6/I5"/>
+    <FileList>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\baud_gen.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\byte_fifo.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\gao_helper.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\led_latch.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\link_rx_catcher.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\pc_rx_catcher.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\pc_tx_arbiter.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\piso.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\por_reset.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\sipo.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\sync_2ff.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\transceiver.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\uart_rx.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\uart_rx_ctrl.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\uart_tx.v" type="verilog"/>
+        <File path="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\src\uart_tx_ctrl.v" type="verilog"/>
+    </FileList>
+    <OptionList>
+        <Option type="disable_insert_pad" value="0"/>
+        <Option type="global_freq" value="50.000"/>
+        <Option type="looplimit" value="2000"/>
+        <Option type="output_file" value="C:\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\bin\Documents\UART_transceiver_rev_1\impl\gwsynthesis\UART_transceiver_rev_1.vg"/>
+        <Option type="print_all_synthesis_warning" value="0"/>
+        <Option type="ram_rw_check" value="0"/>
+        <Option type="vcc" value="1.2"/>
+        <Option type="verilog_language" value="verilog-2001"/>
+        <Option type="vhdl_language" value="vhdl-1993"/>
+    </OptionList>
+</Project>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="transceiver" Lut="1" T_Register="181(0)" T_Alu="93(0)" T_Lut="208(1)" T_Ssram="6(0)">
+ <SubModule name="por_inst" Register="8" Alu="7" Lut="2" T_Register="8(8)" T_Alu="7(7)" T_Lut="2(2)"/>
+ <SubModule name="pc_catcher" T_Register="33(0)" T_Lut="48(0)">
+  <SubModule name="core" T_Register="33(0)" T_Lut="48(0)">
+   <SubModule name="input_sync" Register="2" T_Register="2(2)"/>
+   <SubModule name="rx_baud" Register="17" Lut="36" T_Register="17(17)" T_Lut="36(36)"/>
+   <SubModule name="ctrl" Register="6" Lut="12" T_Register="6(6)" T_Lut="12(12)"/>
+   <SubModule name="rx_sipo" Register="8" T_Register="8(8)"/>
+  </SubModule>
+ </SubModule>
+ <SubModule name="link_catcher" T_Register="33(0)" T_Lut="48(0)">
+  <SubModule name="core" T_Register="33(0)" T_Lut="48(0)">
+   <SubModule name="input_sync" Register="2" T_Register="2(2)"/>
+   <SubModule name="rx_baud" Register="17" Lut="36" T_Register="17(17)" T_Lut="36(36)"/>
+   <SubModule name="ctrl" Register="6" Lut="12" T_Register="6(6)" T_Lut="12(12)"/>
+   <SubModule name="rx_sipo" Register="8" T_Register="8(8)"/>
+  </SubModule>
+ </SubModule>
+ <SubModule name="f1_pc_to_link" Register="10" Alu="17" Lut="4" Ssram="2" T_Register="10(10)" T_Alu="17(17)" T_Lut="4(4)" T_Ssram="2(2)"/>
+ <SubModule name="link_tx_inst" T_Register="32(0)" T_Alu="15(0)" T_Lut="36(0)">
+  <SubModule name="tx_baud" Register="17" Alu="15" Lut="8" T_Register="17(17)" T_Alu="15(15)" T_Lut="8(8)"/>
+  <SubModule name="ctrl" Register="5" Lut="10" T_Register="5(5)" T_Lut="10(10)"/>
+  <SubModule name="tx_piso" Register="10" Lut="18" T_Register="10(10)" T_Lut="18(18)"/>
+ </SubModule>
+ <SubModule name="f2_link_to_pc" Register="10" Alu="17" Lut="5" Ssram="2" T_Register="10(10)" T_Alu="17(17)" T_Lut="5(5)" T_Ssram="2(2)"/>
+ <SubModule name="f3_echo_to_pc" Register="10" Alu="17" Lut="5" Ssram="2" T_Register="10(10)" T_Alu="17(17)" T_Lut="5(5)" T_Ssram="2(2)"/>
+ <SubModule name="arbiter" Register="1" Lut="8" T_Register="1(1)" T_Lut="8(8)"/>
+ <SubModule name="pc_tx_inst" T_Register="32(0)" T_Alu="15(0)" T_Lut="44(0)">
+  <SubModule name="tx_baud" Register="17" Alu="15" Lut="8" T_Register="17(17)" T_Alu="15(15)" T_Lut="8(8)"/>
+  <SubModule name="ctrl" Register="5" Lut="10" T_Register="5(5)" T_Lut="10(10)"/>
+  <SubModule name="tx_piso" Register="10" Lut="26" T_Register="10(10)" T_Lut="26(26)"/>
+ </SubModule>
+ <SubModule name="leds" Register="6" Lut="6" T_Register="6(6)" T_Lut="6(6)"/>
+ <SubModule name="gao_inst" Register="6" Alu="5" Lut="1" T_Register="6(6)" T_Alu="5(5)" T_Lut="1(1)"/>
+</Module>
